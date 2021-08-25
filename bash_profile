@@ -1,13 +1,10 @@
 #!/bin/bash
 
-# Include config if exists
-test -f ~/dev-scripts/.go-sandbox.conf && source ~/dev-scripts/.go-sandbox.conf
-
 # Config git
-#git config --global user.email "$GIT_CONFIG_EMAIL"
-#git config --global user.name "$GIT_CONFIG_USER"
-#git -C /home/vipdev/dev-scripts/go-sandbox/ pull
-#git -C /home/vipdev/dev-scripts/go-sandbox/ submodule update --recursive --remote
+if [ -f ~/.go-sandbox.json ]; then
+	git config --global user.email "$(cat ~/.go-sandbox.json | jq -r '.GIT_CONFIG_EMAIL')"
+	git config --global user.name "$(cat ~/.go-sandbox.json | jq -r '.GIT_CONFIG_USER')"
+fi
 
 # Some extra env vars.
 export VIPGO_HOSTNAME=$(php -r "include '/var/www/config/wp-config.php'; echo DOMAIN_CURRENT_SITE;" 2> /dev/null)

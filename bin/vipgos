@@ -1,6 +1,20 @@
 #!/bin/bash
 VIPGO_ID="$1"
 
+# Check for go-sandbox config.
+if [ ! -f ~/.go-sandbox.json ]; then
+	echo "~/.go-sandbox.json config file not found!"
+	echo
+	sleep 5
+fi
+
+cat ~/.go-sandbox.json | jq &> /dev/null
+ret=$?
+if [ $ret -ne 0 ]; then
+	echo "~/.go-sandbox.json config file invalid JSON! Exiting!"
+	exit 1
+fi
+
 # Start sandbox, but don't connect.
 vipgo sandbox start "$VIPGO_ID" -s &> /dev/null
 
@@ -15,6 +29,8 @@ echo "SFTP Connection: sftp://$VIPGO_SSH_USER@$VIPGO_SSH_HOST//var/www/"
 echo "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
 echo
 
+# Copy go-sandbox config.
+scp ~/.go-sandbox.json "$VIPGO_SSH_USER@$VIPGO_SSH_HOST:/root"
+
 # Connect to sandbox.
 vipgo sandbox start "$VIPGO_ID" -A
-
