@@ -45,3 +45,5 @@ function go_sandbox_build_config() (
 	fi
 
 )
+
+main "$@"
