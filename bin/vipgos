@@ -1,0 +1,20 @@
+#!/bin/bash
+VIPGO_ID="$1"
+
+# Start sandbox, but don't connect.
+vipgo sandbox start "$VIPGO_ID" -s &> /dev/null
+
+# Get SSH user and hostname.
+VIPGO_SSH_HOST=$(vipgo sandbox info $VIPGO_ID --json | jq -r '.ssh_host')
+VIPGO_SSH_USER=$(vipgo sandbox info $VIPGO_ID --json | jq -r '.ssh_user')
+
+# Echo SFTP URL.
+echo "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+echo "## Sandbox Connection Info ##"
+echo "SFTP Connection: sftp://$VIPGO_SSH_USER@$VIPGO_SSH_HOST//var/www/"
+echo "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
+echo
+
+# Connect to sandbox.
+vipgo sandbox start "$VIPGO_ID" -A
+
