@@ -7,8 +7,7 @@ if [ -f ~/.go-sandbox.json ]; then
 fi
 
 # Some extra env vars.
-export VIPGO_HOSTNAME=$(php -r "include '/var/www/config/wp-config.php'; echo DOMAIN_CURRENT_SITE;" 2> /dev/null)
-export VIPGO_APP_ID=$(php -r "include '/var/www/config/wp-config.php'; echo VIP_GO_APP_ID;" 2> /dev/null)
+export VIPGO_HOSTNAME=$(hostname | sed 's/-sbx-.*$//g')
 
 # Move custom mu-plugins
 yes | cp -af ~/go-sandbox/mu-plugins/* /var/www/wp-content/mu-plugins/
@@ -28,7 +27,6 @@ export PS1="\
 # Path
 export PATH=/root/go-sandbox/bin/:$PATH
 export LD_LIBRARY_PATH=/root/go-sandbox/bin/:$LD_LIBRARY_PATH
-export VIPGO_HOSTNAME=$(php -r "include '/var/www/config/wp-config.php'; echo DOMAIN_CURRENT_SITE;" 2> /dev/null)
 
 # Adds hostname badge to iTerm2
 printf "\e]1337;SetBadgeFormat=%s\a" $(echo -n "$VIPGO_HOSTNAME" | base64)
