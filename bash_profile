@@ -18,8 +18,8 @@ yes | cp -af ~/go-sandbox/.nanorc ~/.nanorc
 # Some simple aliases
 alias logs="tail -F /tmp/php-errors -F /chroot/tmp/php-errors"
 alias run-crons="wp core is-installed --network --path=/chroot/var/www 2> /dev/null && wp site list --path=/chroot/var/www --field=url 2> /dev/null | xargs -I URL bash -c 'echo Running cron for URL; wp --path=/chroot/var/www cron event run --due-now --url=URL 2> /dev/null' || echo Running cron for $(wp option get siteurl --path=/chroot/var/www 2> /dev/null); wp cron event run --due-now --path=/chroot/var/www 2> /dev/null"
+alias ls="ls --color=auto"
 
-# A better prompt, no $P$G here!
 export PS1="\
 \[$(tput sgr0)\]\[\033[38;5;15m\]\[\033[48;5;124m\][S]\[$(tput sgr0)\]\[\033[38;5;124m\]\[$(tput sgr0)\]\[\033[38;5;15m\] \
 \[$(tput sgr0)\]\[\033[38;5;6m\]\u\[$(tput sgr0)\]@\[\033[38;5;2m\]$VIPGO_HOSTNAME:\[$(tput sgr0)\]\[\033[38;5;3m\]\w\[$(tput sgr0)\]\[\033[38;5;15m\]\\$ \[$(tput sgr0)\]"
