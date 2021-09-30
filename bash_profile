@@ -31,3 +31,12 @@ export LD_LIBRARY_PATH=/root/go-sandbox/bin/:$LD_LIBRARY_PATH
 
 # Adds hostname badge to iTerm2
 printf "\e]1337;SetBadgeFormat=%s\a" $(echo -n "$VIPGO_HOSTNAME" | base64)
+
+# Allows "local" tailing of PHP logs for debugging 😬
+enable_local_php_logs() {
+	grep -c "ini_set( 'error_log', '/tmp/php-errors' );" /var/www/vip-config/vip-config.php &> /dev/null
+	ret=$?
+	if [ $ret -ne 0 ]; then
+		echo "ini_set( 'error_log', '/tmp/php-errors' );" >> /var/www/vip-config/vip-config.php
+	fi
+}
