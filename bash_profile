@@ -26,7 +26,7 @@ export PS1="\
 \[$(tput sgr0)\]\[\033[38;5;6m\]\u\[$(tput sgr0)\]@\[\033[38;5;2m\]$VIPGO_HOSTNAME:\[$(tput sgr0)\]\[\033[38;5;3m\]\w\[$(tput sgr0)\]\[\033[38;5;15m\]\\$ \[$(tput sgr0)\]"
 
 # Path
-export PATH=/root/go-sandbox/bin/:$PATH
+export PATH=/root/bin/:/root/go-sandbox/bin/:$PATH
 export LD_LIBRARY_PATH=/root/go-sandbox/bin/:$LD_LIBRARY_PATH
 
 # Adds hostname badge to iTerm2
