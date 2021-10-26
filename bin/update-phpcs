@@ -1,9 +1,7 @@
 #!/bin/bash
 rm ~/bin/phpcs
 rm ~/bin/phpcbf
-rm -rf ~/bin/phpcs-rules/WordPress-Coding-Standards
-rm -rf ~/bin/phpcs-rules/VIP-Coding-Standards
-rm -rf ~/bin/phpcs-rules/PHPCompatibility
+rm -rf ~/bin/phpcs-rules/
 
 wget -O ~/bin/phpcs https://squizlabs.github.io/PHP_CodeSniffer/phpcs.phar
 wget -O ~/bin/phpcbf https://squizlabs.github.io/PHP_CodeSniffer/phpcbf.phar
@@ -17,4 +15,4 @@ git clone -b master --depth 1 https://github.com/wimg/PHPCompatibility.git ~/bin
 git clone -b master --depth 1 https://github.com/PHPCSStandards/PHPCSUtils.git ~/bin/phpcs-rules/PHPCSUtils
 git clone -b 2.8.2 --depth 1 https://github.com/sirbrillig/phpcs-variable-analysis.git ~/bin/phpcs-rules/phpcs-variable-analysis
 
-~/bin/phpcs --config-set installed_paths /home/vipdev/bin/phpcs-rules/PHPCompatibility,/home/vipdev/bin/phpcs-rules/WordPress-Coding-Standards,/home/vipdev/bin/phpcs-rules/VIP-Coding-Standards,/home/vipdev/bin/phpcs-rules/PHPCSUtils,/home/vipdev/bin/phpcs-rules/phpcs-variable-analysis
+~/bin/phpcs --config-set installed_paths /root/bin/phpcs-rules/PHPCompatibility,/root/bin/phpcs-rules/WordPress-Coding-Standards,/root/bin/phpcs-rules/VIP-Coding-Standards,/root/bin/phpcs-rules/PHPCSUtils,/root/bin/phpcs-rules/phpcs-variable-analysis
