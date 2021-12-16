@@ -1,5 +1,4 @@
 #!/bin/bash
-VIPGO_ID="$1"
 
 # Check for go-sandbox config.
 if [ ! -f ~/.go-sandbox.json ]; then
@@ -15,6 +14,28 @@ if [ $ret -ne 0 ]; then
 	exit 1
 fi
 
+# https://stackoverflow.com/a/14203146
+POSITIONAL=()
+while [[ $# -gt 0 ]]; do
+	key="$1"
+
+	case $key in
+	-so|--sftp-only)
+		SFTPONLY=YES
+		shift # past argument
+		;;
+	*) # unknown option
+		POSITIONAL+=("$1") # save it in an array for later
+		shift # past argument
+		;;
+	esac
+done
+
+set -- "${POSITIONAL[@]}" # restore positional parameters
+
+# Set VIP Go Site hostname/ID
+VIPGO_ID="$1"
+
 # Start sandbox, but don't connect.
 vipgo sandbox start "$VIPGO_ID" -s &> /dev/null
 
@@ -28,6 +49,10 @@ echo "## Sandbox Connection Info ##"
 echo "SFTP Connection: sftp://$VIPGO_SSH_USER@$VIPGO_SSH_HOST//var/www/"
 echo "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
 echo
+
+if [ 'YES' == "$SFTPONLY" ]; then
+	exit 0
+fi
 
 # Copy go-sandbox config.
 scp ~/.go-sandbox.json "$VIPGO_SSH_USER@$VIPGO_SSH_HOST:/root"
