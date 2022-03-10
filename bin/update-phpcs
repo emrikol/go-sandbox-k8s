@@ -13,6 +13,6 @@ git clone -b master --depth 1 https://github.com/WordPress-Coding-Standards/Word
 git clone -b master --depth 1 https://github.com/Automattic/VIP-Coding-Standards.git ~/bin/phpcs-rules/VIP-Coding-Standards
 git clone -b master --depth 1 https://github.com/wimg/PHPCompatibility.git ~/bin/phpcs-rules/PHPCompatibility
 git clone -b master --depth 1 https://github.com/PHPCSStandards/PHPCSUtils.git ~/bin/phpcs-rules/PHPCSUtils
-git clone -b 2.8.2 --depth 1 https://github.com/sirbrillig/phpcs-variable-analysis.git ~/bin/phpcs-rules/phpcs-variable-analysis
+git clone -b 2.11.3 --depth 1 https://github.com/sirbrillig/phpcs-variable-analysis.git ~/bin/phpcs-rules/phpcs-variable-analysis
 
 ~/bin/phpcs --config-set installed_paths /root/bin/phpcs-rules/PHPCompatibility,/root/bin/phpcs-rules/WordPress-Coding-Standards,/root/bin/phpcs-rules/VIP-Coding-Standards,/root/bin/phpcs-rules/PHPCSUtils,/root/bin/phpcs-rules/phpcs-variable-analysis
