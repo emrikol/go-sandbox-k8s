@@ -11,8 +11,10 @@ chmod +x ~/bin/phpcbf
 
 git clone -b master --depth 1 https://github.com/WordPress-Coding-Standards/WordPress-Coding-Standards.git ~/bin/phpcs-rules/WordPress-Coding-Standards
 git clone -b master --depth 1 https://github.com/Automattic/VIP-Coding-Standards.git ~/bin/phpcs-rules/VIP-Coding-Standards
-git clone -b master --depth 1 https://github.com/wimg/PHPCompatibility.git ~/bin/phpcs-rules/PHPCompatibility
+git clone -b develop --depth 1 https://github.com/PHPCompatibility/PHPCompatibility.git ~/bin/phpcs-rules/PHPCompatibility
+git clone -b master --depth 1 https://github.com/PHPCompatibility/PHPCompatibilityWP.git ~/bin/phpcs-rules/PHPCompatibilityWP
+git clone -b master --depth 1 https://github.com/PHPCompatibility/PHPCompatibilityParagonie.git ~/bin/phpcs-rules/PHPCompatibilityParagonie
 git clone -b master --depth 1 https://github.com/PHPCSStandards/PHPCSUtils.git ~/bin/phpcs-rules/PHPCSUtils
 git clone -b v2.11.3 --depth 1 https://github.com/sirbrillig/phpcs-variable-analysis.git ~/bin/phpcs-rules/phpcs-variable-analysis
 
-~/bin/phpcs --config-set installed_paths /root/bin/phpcs-rules/PHPCompatibility,/root/bin/phpcs-rules/WordPress-Coding-Standards,/root/bin/phpcs-rules/VIP-Coding-Standards,/root/bin/phpcs-rules/PHPCSUtils,/root/bin/phpcs-rules/phpcs-variable-analysis
+~/bin/phpcs --config-set installed_paths /root/bin/phpcs-rules/PHPCompatibility,/root/bin/phpcs-rules/PHPCompatibilityParagonie,/root/bin/phpcs-rules/PHPCompatibilityWP,/root/bin/phpcs-rules/WordPress-Coding-Standards,/root/bin/phpcs-rules/VIP-Coding-Standards,/root/bin/phpcs-rules/PHPCSUtils,/root/bin/phpcs-rules/phpcs-variable-analysis
