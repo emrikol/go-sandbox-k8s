@@ -1,6 +1,12 @@
 #!/bin/bash
 
 # Check for go-sandbox config.
+#
+# Example ~/.go-sandbox.json config:
+# {
+# 	"GIT_CONFIG_EMAIL": "leeroy.jenkins@example.com",
+# 	"GIT_CONFIG_USER": "Leeroy Jenkins"
+# }
 if [ ! -f ~/.go-sandbox.json ]; then
 	echo "~/.go-sandbox.json config file not found!"
 	echo
