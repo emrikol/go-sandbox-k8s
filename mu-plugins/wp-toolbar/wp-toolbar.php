@@ -295,14 +295,14 @@ function wpcom_adminbar_superadmin_dashboard_menu() {
 			'id' => 'vipgo-admin-origin-requests',
 			'parent' => 'vipgo-admin',
 			'title' => 'Origin Requests',
-			'href' => "https://logstash.a8c.com/kibana6/app/kibana#/dashboard/%5Bvipv2-nginx%5D-WEB-nginx-logs-dashboard?_a=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'vipv2-nginx-*',key:client_site_id,negate:!f,params:(query:'" . VIP_GO_APP_ID . "'),type:phrase,value:'Site+ID+" . VIP_GO_APP_ID . "'),query:(match:(client_site_id:(query:'" . VIP_GO_APP_ID . "',type:phrase))))),query:(language:lucene,query:'*'),timeRestore:!f,title:'%5Bvipv2-nginx%5D%20Origin%20logs%20dashboard',viewMode:view)",
+			'href' => "https://logstash.a8c.com/kibana6/app/kibana#/dashboard/%5Bvipv2-nginx%5D-WEB-nginx-logs-dashboard?_a=(filters:!(('\$state':(store:appState),meta:(alias:!n,disabled:!f,index:'vipv2-nginx-*',key:client_site_id,negate:!f,params:(query:'" . VIP_GO_APP_ID . "'),type:phrase,value:'Site+ID+" . VIP_GO_APP_ID . "'),query:(match:(client_site_id:(query:'" . VIP_GO_APP_ID . "',type:phrase))))),query:(language:lucene,query:'*'),timeRestore:!f,title:'%5Bvipv2-nginx%5D%20Origin%20logs%20dashboard',viewMode:view)",
 		) );
 
 		$wp_admin_bar->add_menu( array(
 			'id' => 'vipgo-admin-lb-requests',
 			'parent' => 'vipgo-admin',
 			'title' => 'LB Requests',
-			'href' => "https://logstash.a8c.com/kibana6/app/kibana#/dashboard/%5Bvipv2-nginx%5D-LB-logs-dashboard?_a=(filters:!(('$state':(store:appState),meta:(alias:!n,disabled:!f,index:'vipv2-nginx-*',key:client_site_id,negate:!f,params:(query:'" . VIP_GO_APP_ID . "'),type:phrase,value:'Site+ID+" . VIP_GO_APP_ID . "'),query:(match:(client_site_id:(query:'" . VIP_GO_APP_ID . "',type:phrase))))),query:(language:lucene,query:'*'),timeRestore:!f,title:'%5Bvipv2-nginx%5D+LB+logs+dashboard',viewMode:view)",
+			'href' => "https://logstash.a8c.com/kibana6/app/kibana#/dashboard/%5Bvipv2-nginx%5D-LB-logs-dashboard?_a=(filters:!(('\$state':(store:appState),meta:(alias:!n,disabled:!f,index:'vipv2-nginx-*',key:client_site_id,negate:!f,params:(query:'" . VIP_GO_APP_ID . "'),type:phrase,value:'Site+ID+" . VIP_GO_APP_ID . "'),query:(match:(client_site_id:(query:'" . VIP_GO_APP_ID . "',type:phrase))))),query:(language:lucene,query:'*'),timeRestore:!f,title:'%5Bvipv2-nginx%5D+LB+logs+dashboard',viewMode:view)",
 		) );
 
 		$wp_admin_bar->add_menu( array(
