@@ -8,17 +8,12 @@
 # 	"GIT_CONFIG_USER": "Leeroy Jenkins"
 # }
 if [ ! -f ~/.go-sandbox.json ]; then
-	echo "~/.go-sandbox.json config file not found!"
+	echo "$HOME/.go-sandbox.json config file not found!"
 	echo
 	sleep 5
 fi
 
-cat ~/.go-sandbox.json | jq &> /dev/null
-ret=$?
-if [ $ret -ne 0 ]; then
-	echo "~/.go-sandbox.json config file invalid JSON! Exiting!"
-	exit 1
-fi
+jq < ~/.go-sandbox.json > /dev/null 2>&1 || { echo "$HOME/.go-sandbox.json config file invalid JSON! Exiting"; exit 1; }
 
 # https://stackoverflow.com/a/14203146
 POSITIONAL=()
@@ -42,12 +37,15 @@ set -- "${POSITIONAL[@]}" # restore positional parameters
 # Set VIP Go Site hostname/ID
 VIPGO_ID="$1"
 
+# Test if logged in.
+vipgo api GET / 2>&1 | grep -q "Invalid or expired" && echo "Invalid or expired token. Please login with 'vipgo login'" && exit
+
 # Start sandbox, but don't connect.
 vipgo sandbox start "$VIPGO_ID" -s &> /dev/null
 
 # Get SSH user and hostname.
-VIPGO_SSH_HOST=$(vipgo sandbox info $VIPGO_ID --json | jq -r '.ssh_host')
-VIPGO_SSH_USER=$(vipgo sandbox info $VIPGO_ID --json | jq -r '.ssh_user')
+VIPGO_SSH_HOST=$(vipgo sandbox info "$VIPGO_ID" --json | jq -r '.ssh_host')
+VIPGO_SSH_USER=$(vipgo sandbox info "$VIPGO_ID" --json | jq -r '.ssh_user')
 
 # Echo SFTP URL.
 echo "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
