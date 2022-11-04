@@ -126,3 +126,57 @@ function sh_vip_add_to_error_message($message, $error){
 	return $message.$extra_info;
 }
 add_filter('wp_php_error_message', 'sh_vip_add_to_error_message', 10, 2);
+
+function vip_timer_start( $name ) {
+	global $vip_timer;
+
+	$vip_timer[ $name ]['start'] = hrtime( true );
+	$vip_timer[ $name ]['status'] = 'running';
+}
+
+function vip_timer_stop( $name ) {
+	global $vip_timer;
+
+	if ( is_array( $vip_timer ) ) {
+		$vip_timer[ $name ]['stop']   = hrtime( true );
+		$vip_timer[ $name ]['time']   = $vip_timer[ $name ]['stop'] - $vip_timer[ $name ]['start'];
+		$vip_timer[ $name ]['status'] = 'stopped';
+
+		return $vip_timer[ $name ]['time'];
+	}
+
+	return false;
+}
+
+function vip_timer_get( $name, $resolution = 'ms' ) {
+	global $vip_timer;
+
+	if ( ! is_array( $vip_timer ) || ! is_array( $vip_timer[ $name ] ) ) {
+		return 'Unknown Timer';
+	}
+
+	if ( 'stopped' === $vip_timer[ $name ]['status'] ) {
+		$time = $vip_timer[ $name ]['time'];
+	} else {
+		$time = hrtime( true ) - $vip_timer[ $name ]['start'];
+	}
+
+	switch ( $resolution ) {
+		case 'ns':
+			$time = $time;
+			break;
+		case 'ms':
+			$time /= 1e+6;
+			break;
+		default:
+			return 'Unknown Resolution: ' . $resolution;
+	}
+
+	$time .= $resolution;
+
+	if ( 'running' === $vip_timer[ $name ]['status'] ) {
+		$time .= '+';
+	}
+
+	return sprintf( 'Timer %s: %s', $name, $time );
+}
