@@ -5,6 +5,7 @@ error_reporting( E_ERROR | E_WARNING | E_PARSE ); // Disable notices in logs.
 // Uncomment to enable some specific Sandbox Helper debugs:
 //define( 'SWPD_REST_DEBUG', true ); // REST Requests.
 //define( 'SWPD_SQL_DEBUG', true ); // SQL Queries.
+//define( 'SWPD_MEMCACHE_DEBUG', true ); // Memcache.
 
 foreach( array(
 	__DIR__ . '/sandbox-wp-debugger/sandbox-wp-debugger.php',
@@ -36,7 +37,6 @@ if ( ! function_exists( 'vip_dump' ) ) {
 
 // Add Sandbox WP Debugger support for internal REST API requests.
 add_action( 'rest_pre_dispatch', function( $result, $server, $request ) {
-	$slow_queries = new SlowQueries();
 	if ( function_exists( 'swpd_log' ) && defined( 'SWPD_REST_DEBUG' ) ) {
 		swpd_log(
 			function: 'rest_do_request',
@@ -44,19 +44,153 @@ add_action( 'rest_pre_dispatch', function( $result, $server, $request ) {
 			data: $request->get_params()
 		);
 	}
-}, 10, 3 );
+}, PHP_INT_MAX, 3 );
 
 add_action( 'shutdown', function() {
-	$slow_queries = new SlowQueries();
 	if ( function_exists( 'swpd_log' ) && defined( 'SWPD_SQL_DEBUG' ) ) {
+		$slow_queries = new SlowQueries();
 		swpd_log(
 			function: 'Query Summary',
-			message: $slow_queries->render_sql_queries() . 'Query Summary: ' . "\n" . $slow_queries->render_sql_queries(),
+			message: $slow_queries->render_sql_queries() . 'Query Summary: ' . PHP_EOL . $slow_queries->render_sql_queries(),
 			data: array(),
 			backtrace: false
 		);
 	}
-}, 10 );
+}, PHP_INT_MAX, 3 );
+
+add_action( 'shutdown', function() {
+	if ( function_exists( 'swpd_log' ) && defined( 'SWPD_MEMCACHE_DEBUG' ) ) {
+
+		global $wp_object_cache;
+
+		$total_memcache_time = 'Total memcache query time: ' . number_format_i18n( sprintf( '%0.1f', $wp_object_cache->time_total * 1000 ), 1 ) . ' ms';
+		$total_memcache_size = 'Total memcache size: ' . size_format( $wp_object_cache->size_total, 2 );
+
+		$memcache_stats = array();
+
+		foreach ( $wp_object_cache->stats as $stat => $n ) {
+			if ( empty( $n ) ) {
+				continue;
+			}
+
+			$memcache_stats[] = sprintf( '%s %s', $stat, $n );
+		}
+
+		$data = array_map(function($key, $value) {
+			return array($key,$value);
+		}, array_keys( $wp_object_cache->stats), $wp_object_cache->stats );
+		$data = array_merge( array( array( 'Method', 'Calls' ) ), $data );
+
+		$calls_table = vip_array_to_ascii_table( $data );
+
+
+		$groups = array_keys( $wp_object_cache->group_ops );
+		usort( $groups, 'strnatcasecmp' );
+
+		$active_group = $groups[0];
+		// Always show `slow-ops` first
+		if ( in_array( 'slow-ops', $groups ) ) {
+			$slow_ops_key = array_search( 'slow-ops', $groups );
+			$slow_ops = $groups[ $slow_ops_key ];
+			unset( $groups[ $slow_ops_key ] );
+			array_unshift( $groups, $slow_ops );
+			$active_group = 'slow-ops';
+		}
+
+		$total_ops = 0;
+		$group_titles = array();
+		$groups_table = array( array( 'Group Name', 'Ops', 'Size', 'Time' ) );
+		foreach ( $groups as $group ) {
+			$group_name = $group;
+			if ( empty( $group_name ) ) {
+				$group_name = 'default';
+			}
+			$group_ops = count( $wp_object_cache->group_ops[ $group ] );
+			$group_size = size_format( array_sum( array_map( function ( $op ) { return $op[2]; }, $wp_object_cache->group_ops[ $group ] ) ), 2 );
+			$group_time = number_format_i18n( sprintf( '%0.1f', array_sum( array_map( function ( $op ) { return $op[3]; }, $wp_object_cache->group_ops[ $group ] ) ) * 1000 ), 1 );
+			$total_ops += $group_ops;
+			$group_title = "{$group_name} [$group_ops][$group_size][{$group_time} ms]";
+			$group_titles[ $group ] = $group_title;
+			//echo "\t<li><a href='#' onclick='memcachedToggleVisibility( \"object-cache-stats-menu-target-" . esc_js( $group_name ) . "\", \"object-cache-stats-menu-target-\" );'>" . esc_html( $group_title ) . "</a></li>\n";
+			$groups_table[] = array(
+				$group_name,
+				$group_ops,
+				$group_size,
+				$group_time . 'ms',
+			);
+		}
+
+		$groups_table = vip_array_to_ascii_table( $groups_table );
+
+		$group_details_table = array( array( 'Group Details' ) );
+		foreach ( $groups as $group ) {
+			$group_name = $group;
+			if ( empty( $group_name ) ) {
+				$group_name = 'default';
+			}
+			//$current = $active_group == $group ? 'style="display: block"' : 'style="display: none"';
+			//echo "<div id='object-cache-stats-menu-target-" . esc_attr( $group_name ) . "' class='object-cache-stats-menu-target' $current>\n";
+			//echo '<h3>' . esc_html( $group_titles[ $group ] ) . '</h3>' . "\n";
+			$group_ops_line = '';
+			foreach ( $wp_object_cache->group_ops[ $group ] as $index => $arr ) {
+				$group_ops_line .= sprintf( '%3d ', $index );
+				$group_ops_line .= vip_get_group_ops_line( $index, $arr );
+			}
+			$group_details_table[] = array(
+				wordwrap( $group_titles[ $group ], 50, PHP_EOL, true ),
+				wordwrap( $group_ops_line, 50, PHP_EOL, true ),
+			);
+
+		}
+	//$groups_table = vip_array_to_ascii_table( $group_details_table );
+	vip_dump( $group_details_table );
+		//echo "</div>";
+
+		if ( function_exists( 'swpd_log' ) && defined( 'WP_DEBUG' ) ) {
+			swpd_log(
+				function: 'Object Cache Summary',
+				message: 'Memcache Stats:' . PHP_EOL . $total_memcache_time . PHP_EOL . $total_memcache_size . PHP_EOL . PHP_EOL . $calls_table . PHP_EOL . PHP_EOL . $groups_table,
+				data: array(),
+				backtrace: false
+			);
+		}
+	}
+}, PHP_INT_MAX, 3 );
+
+	function vip_get_group_ops_line( $index, $arr ) {
+		// operation
+		$line = "{$arr[0]} ";
+
+		// key
+		$json_encoded_key = json_encode( $arr[1] );
+		$line .= $json_encoded_key . " ";
+
+		// comment
+		if ( ! empty( $arr[4] ) ) {
+			$line .= "{$arr[4]} ";
+		}
+
+		// size
+		if ( isset( $arr[2] ) ) {
+			$line .= '(' . size_format( $arr[2], 2 ) . ') ';
+		}
+
+		// time
+		if ( isset( $arr[3] ) ) {
+			$line .= '(' . number_format_i18n( sprintf( '%0.1f', $arr[3] * 1000 ), 1 ) . ' ms)';
+		}
+
+		// backtrace
+		$bt_link = '';
+		if ( isset( $arr[6] ) ) {
+			$key_hash = md5( $index . $json_encoded_key );
+			$bt_link .= $arr[6];
+		}
+
+		return $line;
+
+		return $this->colorize_debug_line( $line, $bt_link );
+	}
 
 // Stolen from https://github.com/rickhurst/vip-login-limit-debug/
 /* Add message above login form */
@@ -201,3 +335,62 @@ function vip_timer_get( $name, $resolution = 'ms' ) {
 
 	return sprintf( 'Timer %s: %s', $name, $time );
 }
+
+// https://stackoverflow.com/a/73692927
+function vip_unicode_safe_str_pad( string $string, int $length, string $pad_string = ' ' ): string {
+	//$multiline_string = "This is a very long string that needs to be wrapped to a specific number of characters.
+	//It's a multiline string and it will be used to get the length of the longest line.";
+
+	$lines = explode("\n", $string);
+	$lengths = array_map('strlen', $lines);
+
+	$max_length = max($lengths);
+
+
+
+	$times = $length - mb_strlen($string) >=0 ? $length - mb_strlen($string) : 0;
+	$times = $length - $max_length;
+	return $string . str_repeat( $pad_string, $times );
+}
+
+function vip_array_to_ascii_table( array $rows = array() ): string {
+	if ( count( $rows ) === 0 ) {
+		return '';
+	}
+
+	$widths = array();
+
+	foreach ( $rows as $cells ) {
+		foreach ($cells as $j => $cell) {
+			if (($width = strlen($cell) + 2) >= ($widths[$j] ?? 0)) {
+				$widths[$j] = $width;
+			}
+		}
+	}
+
+	$hBar = str_repeat('─', array_sum($widths) + count($widths) - 1);
+	$topB = sprintf("┌%s┐", $hBar);
+	$midB = sprintf("├%s┤", $hBar);
+	$botB = sprintf("└%s┘", $hBar);
+
+	$result[] = $topB;
+
+	foreach ($rows as $i => $cells) {
+		$result[] = sprintf("│%s│", implode('│', array_map(function ($c, $w): string {
+			return vip_unicode_safe_str_pad(" {$c} ", $w);
+		}, $cells, $widths)));
+		if ($i === 0) {
+			$result[] = $midB;
+		}
+	}
+	$result[] = $botB;
+
+	return implode(PHP_EOL, $result);
+}
+
+add_filter( 'rest_attachment_query', function( $args, $request ) {
+	//$args['es'] = true; // Offloads to Enterprise Search, very fast.
+	$args['no_found_rows'] = true; // Removes SQL_CALC_FOUND_ROWS and reduces query to under 1ms.
+
+	return $args;
+}, 10, 2 );
