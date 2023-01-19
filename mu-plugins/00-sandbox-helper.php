@@ -2,6 +2,10 @@
 ini_set( 'xdebug.cli_color', 1 );
 error_reporting( E_ERROR | E_WARNING | E_PARSE ); // Disable notices in logs.
 
+// Uncomment to enable some specific Sandbox Helper debugs:
+//define( 'SWPD_REST_DEBUG', true ); // REST Requests.
+//define( 'SWPD_SQL_DEBUG', true ); // SQL Queries.
+
 foreach( array(
 	__DIR__ . '/sandbox-wp-debugger/sandbox-wp-debugger.php',
 	__DIR__ . '/wp-toolbar/wp-toolbar.php',
@@ -32,10 +36,27 @@ if ( ! function_exists( 'vip_dump' ) ) {
 
 // Add Sandbox WP Debugger support for internal REST API requests.
 add_action( 'rest_pre_dispatch', function( $result, $server, $request ) {
+	$slow_queries = new SlowQueries();
 	if ( function_exists( 'swpd_log' ) && defined( 'SWPD_REST_DEBUG' ) ) {
-		swpd_log( 'rest_do_request', $request->get_route(), $request->get_params(), [], true );
+		swpd_log(
+			function: 'rest_do_request',
+			message: 'REST Route: ' . $request->get_route(),
+			data: $request->get_params()
+		);
 	}
 }, 10, 3 );
+
+add_action( 'shutdown', function() {
+	$slow_queries = new SlowQueries();
+	if ( function_exists( 'swpd_log' ) && defined( 'SWPD_SQL_DEBUG' ) ) {
+		swpd_log(
+			function: 'Query Summary',
+			message: $slow_queries->render_sql_queries() . 'Query Summary: ' . "\n" . $slow_queries->render_sql_queries(),
+			data: array(),
+			backtrace: false
+		);
+	}
+}, 10 );
 
 // Stolen from https://github.com/rickhurst/vip-login-limit-debug/
 /* Add message above login form */
