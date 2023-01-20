@@ -1,8 +1,17 @@
 <?php
+/**
+ * WP-CLI Commands for Sandbox Helper.
+ */
 
 if ( ! class_exists( 'WP_CLI_Command' ) ) {
 	return;
 }
+
+// phpcs:disable WordPressVIPMinimum.Classes.RestrictedExtendClasses.wp_cli, Squiz.Commenting.FunctionComment.MissingParamTag
+
+/**
+ * VIP_Go_Sandbox_Helpers_Command Class.
+ */
 class VIP_Go_Sandbox_Helpers_Command extends WP_CLI_Command {
 	/**
 	 * Undeletes an image from the VIP Go files service.
@@ -19,7 +28,7 @@ class VIP_Go_Sandbox_Helpers_Command extends WP_CLI_Command {
 
 		$url = esc_url_raw( $args[0] );
 
-		if ( ! filter_var( $url, FILTER_VALIDATE_URL) ) {
+		if ( ! filter_var( $url, FILTER_VALIDATE_URL ) ) {
 			WP_CLI::error( 'Not a valid URL: %s', $url );
 		}
 
@@ -27,7 +36,7 @@ class VIP_Go_Sandbox_Helpers_Command extends WP_CLI_Command {
 			$url,
 			array(
 				'method'  => 'DELETE',
-				'timeout' => 10,
+				'timeout' => 10, // phpcs:ignore WordPressVIPMinimum.Performance.RemoteRequestTimeout.timeout_timeout
 				'headers' => array(
 					'X-Client-Site-ID' => FILES_CLIENT_SITE_ID,
 					'X-Action'         => 'undelete',
@@ -41,7 +50,6 @@ class VIP_Go_Sandbox_Helpers_Command extends WP_CLI_Command {
 			var_dump( $response ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_dump
 			WP_CLI::error( sprintf( 'Could not undelete %s', $url ) );
 		}
-
 
 		if ( 200 !== (int) $response['response']['code'] ) {
 			WP_CLI::error( sprintf( 'Could not undelete %s, %d HTTP Status returned!', $url, $response['response']['code'] ) );
