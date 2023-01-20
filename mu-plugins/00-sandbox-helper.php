@@ -17,6 +17,7 @@ define( 'VIP_SWPD_SQL_DEBUG', false ); // SQL Queries.
 define( 'VIP_SWPD_MEMCACHE_DEBUG', false ); // Memcache.
 
 foreach ( array(
+	__DIR__ . '/00-sandbox-helper/sandbox-wp-debugger/sandbox-wp-debugger.php',
 	__DIR__ . '/00-sandbox-helper/sandbox-wp-debugger.php',
 	__DIR__ . '/00-sandbox-helper/class-vip-go-sandbox-helpers-command.php',
 	__DIR__ . '/00-sandbox-helper/debugging-helpers.php',

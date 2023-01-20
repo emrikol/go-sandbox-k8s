@@ -33,7 +33,7 @@ function vip_swpd_query_debug(): void {
 		$slow_queries = new SlowQueries();
 		swpd_log(
 			function: 'Query Summary',
-			message: $slow_queries->render_sql_queries() . 'Query Summary: ' . PHP_EOL . $slow_queries->render_sql_queries(),
+			message: $slow_queries->render_sql_queries(),
 			data: array(),
 			backtrace: false
 		);
@@ -53,8 +53,8 @@ function vip_swdp_memcache_debug(): void {
 
 		global $wp_object_cache;
 
-		$total_memcache_time = 'Total memcache query time: ' . number_format_i18n( sprintf( '%0.1f', $wp_object_cache->time_total * 1000 ), 1 ) . ' ms';
-		$total_memcache_size = 'Total memcache size: ' . size_format( $wp_object_cache->size_total, 2 );
+		$total_memcache_time = 'Total query time: ' . number_format_i18n( sprintf( '%0.1f', $wp_object_cache->time_total * 1000 ), 1 ) . ' ms';
+		$total_memcache_size = 'Total size: ' . size_format( $wp_object_cache->size_total, 2 );
 
 		$memcache_stats = array();
 
@@ -179,7 +179,7 @@ function vip_swdp_memcache_debug(): void {
 		if ( function_exists( 'swpd_log' ) && defined( 'WP_DEBUG' ) ) {
 			swpd_log(
 				function: 'Object Cache Summary',
-				message: 'Memcache Stats:' . PHP_EOL . $total_memcache_time . PHP_EOL . $total_memcache_size . PHP_EOL . PHP_EOL . $calls_table . PHP_EOL . $groups_table . PHP_EOL . $group_detail_output,
+				message: 'Memcache Stats: ' . $total_memcache_time . ' | ' . $total_memcache_size . PHP_EOL . PHP_EOL . $calls_table . PHP_EOL . $groups_table . PHP_EOL . $group_detail_output,
 				data: array(),
 				backtrace: false
 			);
@@ -269,7 +269,7 @@ function vip_array_to_ascii_table( array $rows = array() ): string {
 
 	foreach ( $rows as $cells ) {
 		foreach ( $cells as $j => $cell ) {
-			$width = mb_strlen( wordwrap( $cell, $max_cell_width, "\n", true ) ) + 2;
+			$width = mb_strlen( $cell ) + 2;
 			if ( ( $width ) >= ( $widths[ $j ] ?? 0 ) ) {
 				$widths[ $j ] = $width;
 			}
