@@ -18,7 +18,9 @@ class SWPD_REST_Requests {
 	 * Constructor; set up all of the necessary WordPress hooks.
 	 */
 	public function __construct() {
-		add_filter( 'rest_pre_dispatch', array( $this, 'rest_pre_dispatch' ), PHP_INT_MIN, 3 );
+		// Uncomment this if you need pre-dispatch. For instance, if something else is returning pre-dispatch early.
+		//add_filter( 'rest_pre_dispatch', array( $this, 'rest_pre_dispatch' ), PHP_INT_MIN, 3 );
+
 		add_filter( 'rest_post_dispatch', array( $this, 'rest_post_dispatch' ), PHP_INT_MAX, 3 );
 	}
 
@@ -50,17 +52,16 @@ class SWPD_REST_Requests {
 
 	public function rest_post_dispatch( WP_HTTP_Response $result, WP_REST_Server $server, WP_REST_Request $request ) {
 		global $swpd_timers_rest;
-		vip_dump( 'stopping ' . $request->get_route() );
 
-		$time = hrtime( true ) - $swpd_timers_rest[ $request->get_route() ];
+		$time  = hrtime( true ) - $swpd_timers_rest[ $request->get_route() ];
 		$time /= 1e+6; // Convert from ns to ms.
 
 		unset( $swpd_timers_rest[ $request->get_route() ] );
 
 		$data = array_merge(
 			array(
-				'Time Taken' => round( $time , 3 ) . 'ms',
-				'Method' => $request->get_method(),
+				'Time Taken' => round( $time, 3 ) . 'ms',
+				'Method'     => $request->get_method(),
 			),
 			$request->get_params(),
 		);
