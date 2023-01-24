@@ -13,6 +13,7 @@
 	<exclude-pattern>./node_modules/</exclude-pattern>
 	<exclude-pattern>./vendor/</exclude-pattern>
 	<exclude-pattern>./build/</exclude-pattern>
+	<exclude-pattern>./sandbox-wp-debugger/</exclude-pattern>
 
 	<!-- How to scan -->
 	<arg value="sp"/> <!-- Show sniff and progress -->
@@ -57,6 +58,7 @@
 				<element value="vip"/> <!-- Change this value to your theme or plugin prefix. -->
 				<element value="wpcom"/> <!-- Change this value to your theme or plugin prefix. -->
 				<element value="JETPACK"/> <!-- Change this value to your theme or plugin prefix. -->
+				<element value="SWPD"/> <!-- Change this value to your theme or plugin prefix. -->
 			</property>
 		</properties>
 	</rule>

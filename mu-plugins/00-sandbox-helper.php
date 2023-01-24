@@ -15,6 +15,7 @@ error_reporting( E_ERROR | E_WARNING | E_PARSE ); // Disable notices in logs.
 define( 'VIP_SWPD_REST_DEBUG', false ); // REST Requests.
 define( 'VIP_SWPD_SQL_DEBUG', false ); // SQL Queries.
 define( 'VIP_SWPD_MEMCACHE_DEBUG', false ); // Memcache.
+define( 'VIP_SWPD_SLOW_HOOKS_DEBUG', false ); // Slow Hooks.
 
 foreach ( array(
 	__DIR__ . '/00-sandbox-helper/sandbox-wp-debugger/sandbox-wp-debugger.php',
@@ -27,4 +28,8 @@ foreach ( array(
 	} else {
 		error_log( 'SANDBOX-HELPER: Missing File ' . $vip_mu_plugin_file ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 	}
+}
+
+if ( defined( 'VIP_SWPD_SLOW_HOOKS_DEBUG' ) && true === VIP_SWPD_SLOW_HOOKS_DEBUG ) {
+	require_once __DIR__/ . '/00-sandbox-helper/class-swpd-slow-hooks.php'
 }
