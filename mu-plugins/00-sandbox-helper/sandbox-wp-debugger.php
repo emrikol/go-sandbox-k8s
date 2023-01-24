@@ -4,26 +4,6 @@
  */
 
 /**
- * Add Sandbox WP Debugger support for internal REST API requests.
- *
- * @param  mixed           $result  Response to replace the requested version with. Can be anything a normal endpoint can return, or null to not hijack the request.
- * @param  WP_REST_Server  $server  Server instance.
- * @param  WP_REST_Request $request Request used to generate the response.
- *
- * @return void
- */
-function vip_swpd_rest_debug( mixed $result, WP_REST_Server $server, WP_REST_Request $request ): void {
-	if ( function_exists( 'swpd_log' ) && defined( 'VIP_SWPD_REST_DEBUG' ) && true === VIP_SWPD_REST_DEBUG ) {
-		swpd_log(
-			function: 'rest_do_request',
-			message: 'REST Route: ' . $request->get_route(),
-			data: $request->get_params()
-		);
-	}
-}
-add_action( 'rest_pre_dispatch', 'vip_swpd_rest_debug', 10, 3 );
-
-/**
  * Adds Sandbox WP Debugger support to output all SQL Queries.
  *
  * @return void

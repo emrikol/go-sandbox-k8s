@@ -31,5 +31,9 @@ foreach ( array(
 }
 
 if ( defined( 'VIP_SWPD_SLOW_HOOKS_DEBUG' ) && true === VIP_SWPD_SLOW_HOOKS_DEBUG ) {
-	require_once __DIR__/ . '/00-sandbox-helper/class-swpd-slow-hooks.php';
+	require_once __DIR__ . '/00-sandbox-helper/class-swpd-slow-hooks.php';
+}
+
+if ( defined( 'VIP_SWPD_REST_DEBUG' ) && true === VIP_SWPD_REST_DEBUG ) {
+	require_once __DIR__ . '/00-sandbox-helper/class-swpd-rest-requests.php';
 }
