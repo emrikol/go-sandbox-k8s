@@ -12,18 +12,22 @@ if ( ! function_exists( 'vip_dump' ) ) {
 	 * @return void
 	 */
 	function vip_dump( $var = null ) {
-		$old_setting = ini_get( 'html_errors' );
-		ini_set( 'html_errors', false ); // phpcs:ignore WordPress.PHP.IniSet.Risky
-		ini_set( 'xdebug.cli_color', 2 ); // phpcs:ignore WordPress.PHP.IniSet.Risky
+		if ( 0 === ob_get_level() ) {
+			$old_setting = ini_get( 'html_errors' );
+			ini_set( 'html_errors', false ); // phpcs:ignore WordPress.PHP.IniSet.Risky
+			ini_set( 'xdebug.cli_color', 2 ); // phpcs:ignore WordPress.PHP.IniSet.Risky
 
-		ob_start();
-		var_dump( $var ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_dump
-		$out1 = ob_get_contents();
-		ob_end_clean();
-		error_log( $out1 ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
+			ob_start();
+			var_dump( $var ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_dump
+			$out1 = ob_get_contents();
+			ob_end_clean();
+			error_log( $out1 ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
 
-		ini_set( 'xdebug.cli_color', 1 ); // phpcs:ignore WordPress.PHP.IniSet.Risky
-		ini_set( 'html_errors', $old_setting ); // phpcs:ignore WordPress.PHP.IniSet.Risky
+			ini_set( 'xdebug.cli_color', 1 ); // phpcs:ignore WordPress.PHP.IniSet.Risky
+			ini_set( 'html_errors', $old_setting ); // phpcs:ignore WordPress.PHP.IniSet.Risky
+		} else {
+			error_log( var_export( $var, true ) );
+		}
 	}
 }
 
