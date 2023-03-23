@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# Check if 'jq' command is installed
+if ! command -v jq &> /dev/null; then
+	echo "'jq' command not found. Please install it with 'brew install jq'." >&2
+	exit 1
+fi
+
 # Check for go-sandbox config.
 #
 # Example ~/.go-sandbox.json config:
@@ -10,56 +16,27 @@
 if [ ! -f ~/.go-sandbox.json ]; then
 	echo "$HOME/.go-sandbox.json config file not found!"
 	echo
-	sleep 5
+	sleep 5 # Wait for 5 seconds to give the user a chance to read the error message.
 fi
 
+# Check if the go-sandbox config file is valid JSON using the 'jq' command.
 jq < ~/.go-sandbox.json > /dev/null 2>&1 || { echo "$HOME/.go-sandbox.json config file invalid JSON! Exiting"; exit 1; }
 
-# https://stackoverflow.com/a/14203146
-POSITIONAL=()
-while [[ $# -gt 0 ]]; do
-	key="$1"
-
-	case $key in
-	-so|--sftp-only)
-		SFTPONLY=YES
-		shift # past argument
-		;;
-	*) # unknown option
-		POSITIONAL+=("$1") # save it in an array for later
-		shift # past argument
-		;;
-	esac
-done
-
-set -- "${POSITIONAL[@]}" # restore positional parameters
-
-# Set VIP Go Site hostname/ID
+# Set VIP Go Site hostname/ID.
 VIPGO_ID="$1"
 
-# Test if logged in.
+# Check if the user is logged in to the VIP Go environment using the 'vipgo' command.
 vipgo api GET / 2>&1 | grep -q "Invalid or expired" && echo "Invalid or expired token. Please login with 'vipgo login'" && exit
 
 # Start sandbox, but don't connect.
-vipgo sandbox start "$VIPGO_ID" -s &> /dev/null
+vipgo sandbox start "$VIPGO_ID" -s "$@" &> /dev/null
 
-# Get SSH user and hostname.
+# Get SSH user and hostname for the sandbox environment with the specified ID.
 VIPGO_SSH_HOST=$(vipgo sandbox info "$VIPGO_ID" --json | jq -r '.ssh_host')
 VIPGO_SSH_USER=$(vipgo sandbox info "$VIPGO_ID" --json | jq -r '.ssh_user')
 
-# Echo SFTP URL.
-echo "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
-echo "## Sandbox Connection Info ##"
-echo "SFTP Connection: sftp://$VIPGO_SSH_USER@$VIPGO_SSH_HOST//var/www/"
-echo "-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-"
-echo
-
-if [ 'YES' == "$SFTPONLY" ]; then
-	exit 0
-fi
-
-# Copy go-sandbox config.
+# Copy go-sandbox config to the sandbox environment using the 'scp' command.
 scp ~/.go-sandbox.json "$VIPGO_SSH_USER@$VIPGO_SSH_HOST:/root"
 
-# Connect to sandbox.
-vipgo sandbox start "$VIPGO_ID" -A
+# Connect to the sandbox environment.
+vipgo sandbox start "$VIPGO_ID" -A "$@"
