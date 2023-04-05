@@ -45,3 +45,15 @@ enable_local_php_logs() {
 		echo "ini_set( 'error_log', '/tmp/php-errors' );" >> /var/www/vip-config/vip-config.php
 	fi
 }
+
+# pbcopy via iTerm2
+function pbcopy() {
+	if which pbcopy >/dev/null 2>&1; then
+		pbcopy "$@"
+	else
+		# Replace ^[ with the ASCII escape character
+		local start="\e]1337;CopyToClipboard\a"
+		local end="\e]1337;EndCopy\a"
+		printf "${start}$(cat)${end}"
+	fi
+}
