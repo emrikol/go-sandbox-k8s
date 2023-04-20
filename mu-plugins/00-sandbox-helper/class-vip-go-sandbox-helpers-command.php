@@ -19,9 +19,9 @@ class VIP_Go_Sandbox_Helpers_Command extends WP_CLI_Command {
 	public function db_profile( $args, $assoc_args ) {
 		$format = WP_CLI\Utils\get_flag_value( $assoc_args, 'format', 'table' );
 
-		$site_sql_lines = <<<END
-		SHOW TABLES LIKE 'wp_a8c_cron_control_jobs';
-		END;
+$site_sql_lines = <<<END
+SHOW TABLES LIKE 'wp_a8c_cron_control_jobs';
+END;
 
 		$lines = explode( PHP_EOL, $site_sql_lines );
 
