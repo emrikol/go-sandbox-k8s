@@ -51,8 +51,6 @@ END;
 				$stats[ $index ]['runs'][ $run ] = $time_us;
 				$progress->tick();
 			}
-
-			sleep( 1 ); // Give the db a small break.
 		}
 
 		$data = array();
