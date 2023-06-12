@@ -10,6 +10,11 @@ fi
 VIPGO_HOSTNAME=$(hostname | sed 's/-sbx-.*$//g')
 SANDBOXED_HOST=$(wp eval 'global $sandbox_vhosts; echo array_shift(array_values($sandbox_vhosts));' --skip-plugins --skip-themes  2> /dev/null)
 
+# If $SANDBOXED_HOST is empty or only contains whitespace, set to $VIPGO_HOSTNAME
+if [[ -z "${SANDBOXED_HOST// }" ]]; then
+	SANDBOXED_HOST="$VIPGO_HOSTNAME"
+fi
+
 # Move custom mu-plugins
 yes | cp -af ~/go-sandbox/mu-plugins/* /var/www/wp-content/mu-plugins/
 
