@@ -1,3 +1,4 @@
 [submodule "mu-plugins/00-sandbox-helper/sandbox-wp-debugger"]
 	path = mu-plugins/00-sandbox-helper/sandbox-wp-debugger
 	url = git@github.com:Automattic/sandbox-wp-debugger.git
+	branch = emrikol/custom-sandbox-wp-debugger
