@@ -1,5 +1,17 @@
 #!/bin/bash
 
+# Do not run in a sandbox!
+if [ "${IS_VIP_SANDBOX_CONTAINER:-}" = "true" ]; then
+	echo "Error: The script is running in a VIP sandbox."
+	exit 1
+fi
+
+# Check to see if we can copy the config file.
+if ! grep -qE '^[[:space:]]*PermitLocalCommand[[:space:]]+yes$' /etc/ssh/ssh_config; then
+	echo "Error: PermitLocalCommand not enabled in /etc/ssh/ssh_config"
+	exit 1
+fi
+
 # Check if 'jq' command is installed
 if ! command -v jq &> /dev/null; then
 	echo "'jq' command not found. Please install it with 'brew install jq'." >&2
@@ -27,16 +39,6 @@ VIPGO_ID="$1"
 
 # Check if the user is logged in to the VIP Go environment using the 'vipgo' command.
 vipgo api GET / 2>&1 | grep -q "Invalid or expired" && echo "Invalid or expired token. Please login with 'vipgo login'" && exit
-
-# Start sandbox, but don't connect.
-vipgo sandbox start "$VIPGO_ID" -s "$@" &> /dev/null
-
-# Get SSH user and hostname for the sandbox environment with the specified ID.
-VIPGO_SSH_HOST=$(vipgo sandbox info "$VIPGO_ID" --json | jq -r '.ssh_host')
-VIPGO_SSH_USER=$(vipgo sandbox info "$VIPGO_ID" --json | jq -r '.ssh_user')
-
-# Copy go-sandbox config to the sandbox environment using the 'scp' command.
-scp ~/.go-sandbox.json "$VIPGO_SSH_USER@$VIPGO_SSH_HOST:/root"
 
 # Connect to the sandbox environment.
 vipgo sandbox start "$VIPGO_ID" -A "$@"
