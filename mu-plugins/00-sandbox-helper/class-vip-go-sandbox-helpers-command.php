@@ -1,13 +1,15 @@
 <?php
 /**
  * WP-CLI Commands for Sandbox Helper.
+ *
+ * phpcs:disable WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
+ * phpcs:disable WordPressVIPMinimum.Classes.RestrictedExtendClasses.wp_cli
+ * phpcs:disable Squiz.Commenting.FunctionComment.MissingParamTag
  */
 
 if ( ! class_exists( 'WP_CLI_Command' ) ) {
 	return;
 }
-
-// phpcs:disable WordPressVIPMinimum.Classes.RestrictedExtendClasses.wp_cli, Squiz.Commenting.FunctionComment.MissingParamTag
 
 /**
  * VIP_Go_Sandbox_Helpers_Command Class.
@@ -19,7 +21,7 @@ class VIP_Go_Sandbox_Helpers_Command extends WP_CLI_Command {
 	public function db_profile( $args, $assoc_args ) {
 		$format = WP_CLI\Utils\get_flag_value( $assoc_args, 'format', 'table' );
 
-$site_sql_lines = <<<END
+		$site_sql_lines = <<<END
 SHOW TABLES LIKE 'wp_a8c_cron_control_jobs';
 END;
 
@@ -260,7 +262,10 @@ END;
 		global $wpdb;
 
 		$output   = array();
-		$db_size  = array( 'data' => 0, 'index' => 0 );
+		$db_size  = array(
+			'data'  => 0,
+			'index' => 0,
+		);
 		$order_by = WP_CLI\Utils\get_flag_value( $assoc_args, 'order_by', 'Total' );
 		$order    = WP_CLI\Utils\get_flag_value( $assoc_args, 'order', 'asc' );
 		$format   = WP_CLI\Utils\get_flag_value( $assoc_args, 'format', 'table' );
@@ -279,8 +284,8 @@ END;
 		$subsite_sizes = array();
 
 		// Fetch table information from database.
-		foreach ($tables as $table) {
-			$table_info = $wpdb->get_row( "SHOW TABLE STATUS LIKE '$table'" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+		foreach ( $tables as $table ) {
+			$table_info = $wpdb->get_row( "SHOW TABLE STATUS LIKE '$table'" ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
 			// Keep a running total of sizes.
 			$db_size['data']  += $table_info->Data_length; // phpcs:ignore WordPress.NamingConventions.ValidVariableName.UsedPropertyNotSnakeCase
@@ -288,20 +293,20 @@ END;
 
 			if ( true === $subsite ) {
 				// Extract subsite ID from table name.
-				preg_match('/^wp_(\d+)_/', $table_info->Name, $matches);
-				$subsite_prefix = isset($matches[1]) ? "wp_{$matches[1]}_" : 'wp_';
+				preg_match( '/^wp_(\d+)_/', $table_info->Name, $matches );
+				$subsite_prefix = isset( $matches[1] ) ? "wp_{$matches[1]}_" : 'wp_';
 
 				// Calculate total size for each subsite.
-				if (!isset($subsite_sizes[$subsite_prefix])) {
-					$subsite_sizes[$subsite_prefix] = array(
+				if ( ! isset( $subsite_sizes[ $subsite_prefix ] ) ) {
+					$subsite_sizes[ $subsite_prefix ] = array(
 						'Data Size'  => 0,
 						'Index Size' => 0,
-						'Total'      => 0
+						'Total'      => 0,
 					);
 				}
-				$subsite_sizes[$subsite_prefix]['Data Size']  += $table_info->Data_length;
-				$subsite_sizes[$subsite_prefix]['Index Size'] += $table_info->Index_length;
-				$subsite_sizes[$subsite_prefix]['Total']      += $table_info->Data_length + $table_info->Index_length;
+				$subsite_sizes[ $subsite_prefix ]['Data Size']  += $table_info->Data_length;
+				$subsite_sizes[ $subsite_prefix ]['Index Size'] += $table_info->Index_length;
+				$subsite_sizes[ $subsite_prefix ]['Total']      += $table_info->Data_length + $table_info->Index_length;
 			} else {
 				// Format output for WP-CLI's format_items function.
 				$output[] = array(
@@ -315,12 +320,12 @@ END;
 
 		// Format output for WP-CLI's format_items function.
 		if ( true === $subsite ) {
-			foreach ($subsite_sizes as $prefix => $sizes) {
+			foreach ( $subsite_sizes as $prefix => $sizes ) {
 				$output[] = array(
 					'Subsite Prefix' => $prefix,
 					'Data Size'      => $sizes['Data Size'],
 					'Index Size'     => $sizes['Index Size'],
-					'Total'          => $sizes['Total']
+					'Total'          => $sizes['Total'],
 				);
 			}
 		}
@@ -361,8 +366,8 @@ END;
 	/**
 	 * Sorts a table by a specific field and direction.
 	 *
-	 * @param string $field The field to order by.
-	 * @param array  &$array The table array to sort.
+	 * @param string $field     The field to order by.
+	 * @param array  $array     The table array to sort.
 	 * @param string $direction The direction to sort. Ascending ('asc') or descending ('desc').
 	 */
 	private function sort_table_by( $field, &$array, $direction ) {
