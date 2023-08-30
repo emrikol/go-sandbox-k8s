@@ -15,17 +15,17 @@ if [[ -z "${SANDBOXED_HOST// }" ]]; then
 	SANDBOXED_HOST="$VIPGO_HOSTNAME"
 fi
 
-# Move custom mu-plugins
-yes | cp -af ~/go-sandbox/mu-plugins/* /var/www/wp-content/mu-plugins/
+# Move custom mu-plugins if they do not exist
+if [[ ! -f /var/www/wp-content/mu-plugins/00-sandbox-helper.php ]]; then
+	yes | cp -af ~/go-sandbox/mu-plugins/* /var/www/wp-content/mu-plugins/
+fi
 
 # Install rc files
 yes | cp -af ~/go-sandbox/.nanorc ~/.nanorc
 
 # Some simple aliases
-alias logs_long="tail -F /tmp/php-errors -F /chroot/tmp/php-errors"
-alias logs='tail -F /tmp/php-errors -F /chroot/tmp/php-errors | cut -b -300'
-# No longer needed? Commenting out for now, may delete later.
-#alias run-crons="wp core is-installed --network --path=/chroot/var/www 2> /dev/null && wp site list --path=/chroot/var/www --field=url 2> /dev/null | xargs -I URL bash -c 'echo Running cron for URL; wp --path=/chroot/var/www cron event run --due-now --url=URL 2> /dev/null' || echo Running cron for $(wp option get siteurl --path=/chroot/var/www 2> /dev/null); wp cron event run --due-now --path=/chroot/var/www 2> /dev/null"
+alias logs_long="enable_local_php_logs; tail -F /tmp/php-errors -F /chroot/tmp/php-errors"
+alias logs='enable_local_php_logs; tail -F /tmp/php-errors -F /chroot/tmp/php-errors | cut -b -1000'
 alias ls="ls --color=auto"
 alias wp="wp --require=/usr/local/vip-go-dev-scripts/wp-cli/wp-cli.php"
 
