@@ -7,7 +7,7 @@ if [ "${IS_VIP_SANDBOX_CONTAINER:-}" = "true" ]; then
 fi
 
 # Check to see if we can copy the config file.
-if ! grep -qE '^[[:space:]]*PermitLocalCommand[[:space:]]+yes$' /etc/ssh/ssh_config; then
+if ! grep -qE '^[[:space:]]*PermitLocalCommand[[:space:]]+yes' /etc/ssh/ssh_config; then
 	echo "Error: PermitLocalCommand not enabled in /etc/ssh/ssh_config"
 
 	# Check if the /etc/ssh/ssh_config file contains the line "#   PermitLocalCommand no"
