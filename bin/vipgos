@@ -9,6 +9,15 @@ fi
 # Check to see if we can copy the config file.
 if ! grep -qE '^[[:space:]]*PermitLocalCommand[[:space:]]+yes$' /etc/ssh/ssh_config; then
 	echo "Error: PermitLocalCommand not enabled in /etc/ssh/ssh_config"
+
+	# Check if the /etc/ssh/ssh_config file contains the line "#   PermitLocalCommand no"
+	if grep -qE '^#   PermitLocalCommand no$' /etc/ssh/ssh_config; then
+		echo "    Run the following command to automatically fix it:"
+		# Check if we need sudo for write permission
+		echo -n "    "
+		[[ ! -w /etc/ssh/ssh_config ]] && echo -n "sudo "
+		echo "sed -i '' 's/^#   PermitLocalCommand no$/   PermitLocalCommand no # Allow LocalCommands for vipgos/' /etc/ssh/ssh_config"
+	fi
 	exit 1
 fi
 
