@@ -16,7 +16,7 @@ if ! grep -qE '^[[:space:]]*PermitLocalCommand[[:space:]]+yes$' /etc/ssh/ssh_con
 		# Check if we need sudo for write permission
 		echo -n "    "
 		[[ ! -w /etc/ssh/ssh_config ]] && echo -n "sudo "
-		echo "sed -i '' 's/^#   PermitLocalCommand no$/   PermitLocalCommand no # Allow LocalCommands for vipgos/' /etc/ssh/ssh_config"
+		echo "sed -i '' 's/^#   PermitLocalCommand no$/   PermitLocalCommand yes # Allow LocalCommands for vipgos/' /etc/ssh/ssh_config"
 	fi
 	exit 1
 fi
