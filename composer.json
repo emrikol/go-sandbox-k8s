@@ -5,8 +5,9 @@
         }
     },
     "require-dev": {
-        "wp-coding-standards/wpcs": "^3.0",
+        "wp-coding-standards/wpcs": "^3.0.0",
         "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
-        "phpcompatibility/phpcompatibility-wp": "*"
+        "phpcompatibility/phpcompatibility-wp": "*",
+        "automattic/vipwpcs": "^3.0"
     }
 }

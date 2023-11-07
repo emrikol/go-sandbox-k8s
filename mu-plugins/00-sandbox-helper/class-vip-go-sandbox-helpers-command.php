@@ -125,7 +125,7 @@ END;
 		foreach ( $a as $val ) {
 			$d      = ( (float) $val ) - $mean;
 			$carry += $d * $d;
-		};
+		}
 
 		if ( $sample ) {
 			--$n;
@@ -274,7 +274,7 @@ END;
 
 		// Fetch list of tables from database.
 		$tables = array_map(
-			function( $val ) {
+			function ( $val ) {
 				return $val[0];
 			},
 			$wpdb->get_results( 'SHOW TABLES;', ARRAY_N ) // phpcs:ignore WordPress.DB.DirectDatabaseQuery
@@ -366,11 +366,11 @@ END;
 	/**
 	 * Sorts a table by a specific field and direction.
 	 *
-	 * @param string $field     The field to order by.
-	 * @param array  $array     The table array to sort.
-	 * @param string $direction The direction to sort. Ascending ('asc') or descending ('desc').
+	 * @param string $field       The field to order by.
+	 * @param array  $table_array The table array to sort.
+	 * @param string $direction   The direction to sort. Ascending ('asc') or descending ('desc').
 	 */
-	private function sort_table_by( $field, &$array, $direction ) {
+	private function sort_table_by( $field, &$table_array, $direction ) {
 		// Taken from https://joshtronic.com/2013/09/23/sorting-associative-array-specific-key/ Thanks!
 		usort(
 			$array,

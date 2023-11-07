@@ -14,6 +14,7 @@ if ( version_compare( PHP_VERSION, '8.0.0', '>=' ) ) {
 		__DIR__ . '/00-sandbox-helper/sandbox-wp-debugger/sandbox-wp-debugger.php',
 		__DIR__ . '/00-sandbox-helper/sandbox-wp-debugger.php',
 		__DIR__ . '/00-sandbox-helper/class-vip-go-sandbox-helpers-command.php',
+		__DIR__ . '/00-sandbox-helper/class-vip-url-checker-command.php',
 		__DIR__ . '/00-sandbox-helper/debugging-helpers.php',
 	) as $vip_mu_plugin_file ) {
 		if ( file_exists( $vip_mu_plugin_file ) ) {

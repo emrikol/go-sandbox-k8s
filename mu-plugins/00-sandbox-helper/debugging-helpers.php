@@ -7,18 +7,18 @@ if ( ! function_exists( 'vip_dump' ) ) {
 	/**
 	 * Debug helper that acts like var_dump() but outputs to the error log.
 	 *
-	 * @param  mixed $var The object to dump.
+	 * @param  mixed $var_to_dump The object to dump.
 	 *
 	 * @return void
 	 */
-	function vip_dump( $var = null ) {
+	function vip_dump( $var_to_dump = null ) {
 		if ( 0 === ob_get_level() ) {
 			$old_setting = ini_get( 'html_errors' );
 			ini_set( 'html_errors', false ); // phpcs:ignore WordPress.PHP.IniSet.Risky
 			ini_set( 'xdebug.cli_color', 2 ); // phpcs:ignore WordPress.PHP.IniSet.Risky
 
 			ob_start();
-			var_dump( $var ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_dump
+			var_dump( $var_to_dump ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_var_dump
 			$out1 = ob_get_contents();
 			ob_end_clean();
 			error_log( $out1 ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions
@@ -26,7 +26,7 @@ if ( ! function_exists( 'vip_dump' ) ) {
 			ini_set( 'xdebug.cli_color', 1 ); // phpcs:ignore WordPress.PHP.IniSet.Risky
 			ini_set( 'html_errors', $old_setting ); // phpcs:ignore WordPress.PHP.IniSet.Risky
 		} else {
-			error_log( var_export( $var, true ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log, WordPress.PHP.DevelopmentFunctions.error_log_var_export
+			error_log( var_export( $var_to_dump, true ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log, WordPress.PHP.DevelopmentFunctions.error_log_var_export
 		}
 	}
 }
