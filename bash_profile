@@ -71,4 +71,4 @@ then
 fi
 
 # Add Screen name to PS1
-PS1='$(if [ -n "$STY" ]; then echo "\[\e[1m\](Screen: $STY)\[\e[0m\] "; fi)'$PS1
+PS1="$(if [ -n "$STY" ]; then echo "\[\e[1m\](Screen: $STY)\[\e[0m\] "; fi)\n$PS1"
