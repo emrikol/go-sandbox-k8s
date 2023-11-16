@@ -63,12 +63,13 @@ function pbcopy() {
 	fi
 }
 
-# Check if the line 'source $HOME/.bash_profile' already exists in $HOME/.bashrc
-if ! grep -Fxq "source $HOME/.bash_profile" "$HOME/.bashrc"
-then
-    # If the line doesn't exist, append it to $HOME/.bashrc
-    echo "source $HOME/.bash_profile" >> "$HOME/.bashrc"
+# Add .bash_profile to .bashrc if we're in a screen.
+if ! grep -Fxq "if [ -n \"\$STY\" ]; then source \$HOME/.bash_profile; fi" "$HOME/.bashrc"; then
+	echo "if [ -n \"\$STY\" ]; then source \$HOME/.bash_profile; fi" >> "$HOME/.bashrc"
 fi
 
-# Add Screen name to PS1
-PS1="$(if [ -n "$STY" ]; then echo "\[\e[1m\](Screen: $STY)\[\e[0m\] "; fi)\n$PS1"
+# Add Screen name to PS1 if we're in a screen.
+if [ -n "$STY" ]; then
+	PS1="\[\e[1m\](Screen: $STY)\[\e[0m\]\n$PS1"
+	export $PS1
+fi
