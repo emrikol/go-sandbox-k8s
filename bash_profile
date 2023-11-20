@@ -71,5 +71,4 @@ fi
 # Add Screen name to PS1 if we're in a screen.
 if [ -n "$STY" ]; then
 	PS1="\[\e[1m\](Screen: $STY)\[\e[0m\]\n$PS1"
-	export $PS1
 fi
