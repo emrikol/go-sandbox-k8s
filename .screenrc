@@ -1,1 +1,22 @@
+# Enable mouse scroll wheel
 termcapinfo xterm* ti@:te@
+
+# Disable New Screen message
+msgwait 0
+
+# Status Line
+hardstatus alwayslastline
+hardstatus string '%{= kG}[ %{G}%H %{g}][%= %{= kw}%?%-Lw%?%{r}(%{W}%n*%f%t%?(%u)%?%{r})%{w}%?%+Lw%?%?%= %{g}][%{B} %d/%m %{W}%c %{g}]'
+
+# Don't display the copyright page
+startup_message off
+
+# Sick of full-screen programs like vim remaining in the scrollback buffer after you've closed them?
+# https://serverfault.com/a/417618
+altscreen on
+
+# Bind F11 and F12 (NOT F1 and F2) to previous and next screen window
+bindkey -k k9 screen # New Window
+bindkey -k k; kill   # Close Window
+bindkey -k F1 prev   # Prev Window
+bindkey -k F2 next   # Next Window
