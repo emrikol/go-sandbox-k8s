@@ -22,6 +22,7 @@ fi
 
 # Install rc files
 yes | cp -af ~/go-sandbox/.nanorc ~/.nanorc
+yes | cp -af ~/go-sandbox/.screenrc ~/.screenrc
 
 # Some simple aliases
 alias logs_long="enable_local_php_logs; tail -F /tmp/php-errors -F /chroot/tmp/php-errors"
