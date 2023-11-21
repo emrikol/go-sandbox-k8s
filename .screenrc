@@ -20,3 +20,9 @@ bindkey -k k9 screen # New Window
 bindkey -k k; kill   # Close Window
 bindkey -k F1 prev   # Prev Window
 bindkey -k F2 next   # Next Window
+
+# Increase scrollback buffer
+defscrollback 5000
+
+# Automatically name windows
+shelltitle "$ |bash"
