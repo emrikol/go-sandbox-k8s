@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# This script extracts a user ID from the hostname and creates a corresponding directory and symlink
+# This script extracts a user ID from the hostname and creates a corresponding directory in /global-shared/
 
 # Check if the hostname matches the expected pattern with 'u' followed by numbers
 if [[ $HOSTNAME =~ u([0-9]+) ]]; then
@@ -8,27 +8,11 @@ if [[ $HOSTNAME =~ u([0-9]+) ]]; then
 	integer="${BASH_REMATCH[1]}"
 
 	# Construct the directory name using the extracted integer
-	dir_name="/mnt/dev-shared/$integer"
+	dir_name="/global-shared/$integer"
 
 	# Create the directory if it doesn't exist
 	if [ ! -d "$dir_name" ]; then
 		mkdir -p "$dir_name" || { echo "Error creating directory $dir_name"; exit 1; }
-	fi
-
-	# Define the symlink path
-	symlink_path="$HOME/dev-mine"
-
-	# Check if the symlink already exists and points to the correct directory
-	if [ -L "$symlink_path" ] && [ "$(readlink -f "$symlink_path")" == "$dir_name" ]; then
-		echo "Directory $dir_name exists and symlinked to $symlink_path"
-	else
-		# Remove the old symlink if it exists
-		[ -L "$symlink_path" ] && rm "$symlink_path"
-
-		# Create a new symlink to the directory
-		ln -s "$dir_name" "$symlink_path"
-
-		echo "Directory $dir_name created and symlinked to $symlink_path"
 	fi
 else
 	# If the hostname does not match the pattern, output an error message
