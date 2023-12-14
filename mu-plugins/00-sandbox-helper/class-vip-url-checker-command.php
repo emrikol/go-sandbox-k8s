@@ -412,7 +412,14 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 	 * @return void
 	 */
 	private function update_progress( $progress, $i, $urls, $initial_average, $rolling_average, $current_sleep_duration ) {
-		$message = sprintf( 'Scanning %d:%d URLs (Base: %s, Avg: %s, Sleep: %s)', $i, number_format( count( $urls ) ), $this->format_microseconds( $initial_average * 1000 ), $this->format_microseconds( $rolling_average * 1000 ), $this->format_microseconds( $current_sleep_duration ) );
+		$message = sprintf(
+			'Scanning %s:%s URLs (Base: %s, Avg: %s, Sleep: %s)',
+			number_format( $i ),
+			number_format( count( $urls ) ),
+			$this->format_microseconds( $initial_average * 1000 ),
+			$this->format_microseconds( $rolling_average * 1000 ),
+			$this->format_microseconds( $current_sleep_duration )
+		);
 		$progress->tick( 1, $message );
 	}
 
@@ -580,6 +587,7 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 			$this->get_all_rest_routes(),
 			$this->get_misc_urls(),
 		);
+
 
 		// Deduplicate URLs.
 		$urls = array_unique( $urls );
