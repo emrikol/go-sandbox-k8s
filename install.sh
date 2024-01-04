@@ -1,5 +1,6 @@
 #!/bin/bash
 
+# Function to add keys to known_hosts if not exists.
 add_github_ssh_keys() {
 	KEYS=(
 		"github.com ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIOMqqnkVzrm0SdG6UOoqKLsabgH5C9okWi0dh2l9GKJl"
