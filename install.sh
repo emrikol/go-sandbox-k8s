@@ -1,16 +1,4 @@
 #!/bin/bash
-# Install GitHub's SSH keys to known_hosts: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints
-add_github_ssh_keys
-
-# Clone or download GH repo
-git clone --recursive git@github.com:emrikol/go-sandbox-k8s.git ~/go-sandbox 2> /dev/null || git -C ~/go-sandbox pull
-
-# Add source to bashrc if not exists
-grep -c source ~/.bash_profile &> /dev/null
-ret=$?
-if [ $ret -ne 0 ]; then
-	echo "source ~/go-sandbox/bash_profile" >> ~/.bash_profile
-fi
 
 add_github_ssh_keys() {
 	KEYS=(
@@ -30,3 +18,16 @@ add_github_ssh_keys() {
 		fi
 	done
 }
+
+# Install GitHub's SSH keys to known_hosts: https://docs.github.com/en/authentication/keeping-your-account-and-data-secure/githubs-ssh-key-fingerprints
+add_github_ssh_keys
+
+# Clone or download GH repo
+git clone --recursive git@github.com:emrikol/go-sandbox-k8s.git ~/go-sandbox 2> /dev/null || git -C ~/go-sandbox pull
+
+# Add source to bashrc if not exists
+grep -c source ~/.bash_profile &> /dev/null
+ret=$?
+if [ $ret -ne 0 ]; then
+	echo "source ~/go-sandbox/bash_profile" >> ~/.bash_profile
+fi
