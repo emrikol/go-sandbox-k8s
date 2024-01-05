@@ -42,6 +42,11 @@ if ! git clone --recursive git@github.com:emrikol/go-sandbox-k8s.git ~/go-sandbo
 	git -C ~/go-sandbox pull
 fi
 
+# Check if $HOME/.bash_profile exists, create it if not
+if [ ! -f "$HOME/.bash_profile" ]; then
+	touch "$HOME/.bash_profile"
+fi
+
 # Add source to bashrc if not exists
 if ! grep -Fxq "source ~/go-sandbox/bash_profile" ~/.bash_profile; then
 	echo "source ~/go-sandbox/bash_profile" >> ~/.bash_profile
