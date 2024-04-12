@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# Script name
+script_name="xdebug"
+
+# Function to check for other xdebug binaries
+check_for_other_xdebug() {
+    # Get the normalized path of the current script
+    current_script_path="$(realpath "$0")"
+
+    # Find any existing 'xdebug' binaries that aren't this script
+    while IFS= read -r found_path; do
+        normalized_path="$(realpath "$found_path")"
+        if [[ "$normalized_path" != "$current_script_path" ]]; then
+            # Found another xdebug binary
+            echo "Delegating to another xdebug binary at $normalized_path"
+            "$normalized_path" "$@"
+            exit 0
+        fi
+    done < <(which -a $script_name)
+}
+
+# Main script handling
+main() {
+    case "$1" in
+        enable)
+            mv /usr/local/etc/php/conf.d/xdebug.ini_DISABLED /usr/local/etc/php/conf.d/xdebug.ini
+            pkill -e --signal SIGUSR2 -F /var/run/php-fpm.pid
+            ;;
+        disable)
+            mv /usr/local/etc/php/conf.d/xdebug.ini /usr/local/etc/php/conf.d/xdebug.ini_DISABLED
+            pkill -e --signal SIGUSR2 -F /var/run/php-fpm.pid
+            ;;
+        status)
+            if [ -f /usr/local/etc/php/conf.d/xdebug.ini ]; then
+                echo "Xdebug is enabled."
+            elif [ -f /usr/local/etc/php/conf.d/xdebug.ini_DISABLED ]; then
+                echo "Xdebug is disabled."
+            else
+                echo "Xdebug status is unknown."
+            fi
+            ;;
+        *)
+            echo "Usage: $script_name {enable|disable|status}"
+            exit 1
+            ;;
+    esac
+}
+
+# First, check if there's another xdebug binary available
+check_for_other_xdebug "$@"
+
+# If not, handle the command
+main "$@"
