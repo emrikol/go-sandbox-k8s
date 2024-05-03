@@ -48,6 +48,14 @@ if ( ! function_exists( 'vip_timer_start' ) ) {
 }
 
 if ( ! function_exists( 'vip_timer_lap' ) ) {
+	/**
+	 * Measures the time taken for a specific task and logs the result.
+	 *
+	 * @param string $name      The name of the task.
+	 * @param bool   $error_log Whether to log the result using error_log(). Default is true.
+	 *
+	 * @return void
+	 */
 	function vip_timer_lap( string $name, bool $error_log = true ): void {
 		global $vip_timer;
 
@@ -63,12 +71,12 @@ if ( ! function_exists( 'vip_timer_lap' ) ) {
 
 		$vip_timer[ $name ]['start'] = hrtime( true );
 
-		$vip_timer[ $name ]['count']++;
+		++$vip_timer[ $name ]['count'];
 
 		$vip_timer[ $name ]['total'] += $current_total;
 
 		if ( true === $error_log ) {
-			error_log( vip_timer_get_laps( $name ) );
+			error_log( vip_timer_get_laps( $name ) ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log
 		}
 	}
 }

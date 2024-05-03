@@ -261,8 +261,8 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 		$response = wp_remote_get( // phpcs:ignore WordPressVIPMinimum.Functions.RestrictedFunctions.wp_remote_get_wp_remote_get
 			$url,
 			array(
-				'timeout' => 30, // phpcs:ignore WordPressVIPMinimum.Performance.RemoteRequestTimeout.timeout_timeout
-				'cookies' => array(
+				'timeout'   => 30, // phpcs:ignore WordPressVIPMinimum.Performance.RemoteRequestTimeout.timeout_timeout
+				'cookies'   => array(
 					new WP_Http_Cookie(
 						array(
 							'name'  => 'wordpress_logged_in_test123',
@@ -587,7 +587,6 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 			$this->get_all_rest_routes(),
 			$this->get_misc_urls(),
 		);
-
 
 		// Deduplicate URLs.
 		$urls = array_unique( $urls );

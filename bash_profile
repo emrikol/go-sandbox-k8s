@@ -73,6 +73,3 @@ fi
 if [ -n "$STY" ]; then
 	PS1="\[\e[1m\](Screen: $STY)\[\e[0m\]\n$PS1"
 fi
-
-# Make ~/dev-mine/
-bash "$HOME/go-sandbox/bin/mkdevmine"

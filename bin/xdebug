@@ -42,6 +42,13 @@ main() {
             ;;
         *)
             echo "Usage: $script_name {enable|disable|status}"
+            if [ -f /usr/local/etc/php/conf.d/xdebug.ini ]; then
+                echo "Xdebug is enabled."
+            elif [ -f /usr/local/etc/php/conf.d/xdebug.ini_DISABLED ]; then
+                echo "Xdebug is disabled."
+            else
+                echo "Xdebug status is unknown."
+            fi
             exit 1
             ;;
     esac
