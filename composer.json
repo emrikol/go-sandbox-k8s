@@ -5,14 +5,19 @@
     "require": {
       "php": ">=8.0"
     },
-    "require-dev": {
-      "automattic/vipwpcs": "^3",
-      "phpcompatibility/phpcompatibility-wp": "^2"
-    },
-    "config": {
-      "allow-plugins": {
-        "dealerdirect/phpcodesniffer-composer-installer": true
-      }
+  "require-dev": {
+    "automattic/vipwpcs": "^3",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7",
+    "phpcompatibility/phpcompatibility-wp": "^2",
+    "wp-coding-standards/wpcs": "^3.0"
+  },
+  "config": {
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
     }
+  },
+  "scripts": {
+    "lint": "phpcs",
+    "lint:fix": "phpcbf"
   }
-  
+}

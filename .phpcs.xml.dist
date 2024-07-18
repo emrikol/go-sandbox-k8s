@@ -13,7 +13,6 @@
 	<exclude-pattern>./node_modules/</exclude-pattern>
 	<exclude-pattern>./vendor/</exclude-pattern>
 	<exclude-pattern>./build/</exclude-pattern>
-	<exclude-pattern>./sandbox-wp-debugger/</exclude-pattern>
 
 	<!-- How to scan -->
 	<arg value="sp"/> <!-- Show sniff and progress -->
@@ -83,4 +82,13 @@
 		<exclude name="Squiz.Commenting.FileComment.MissingPackageTag" />
 	</rule>
 
+	<!-- Custom Sniffs -->
+	<rule ref="./phpcs/VIPServices/ruleset.xml"/>
+	<rule ref="VIPServices.Functions.TypeDeclaration">
+		<properties>
+			<property name="custom_classes" type="array">
+				<element value="Example_Custom_Class"/>
+			</property>
+		</properties>
+	</rule>
 </ruleset>

@@ -18,7 +18,7 @@ class VIP_Go_Sandbox_Helpers_Command extends WP_CLI_Command {
 	/**
 	 * Profiles DB performance by running SQL queries and returning timing statistics.
 	 */
-	public function db_profile( $args, $assoc_args ) {
+	public function db_profile( array $args, array $assoc_args ): void {
 		$format = WP_CLI\Utils\get_flag_value( $assoc_args, 'format', 'table' );
 
 		$site_sql_lines = <<<END
@@ -142,7 +142,7 @@ END;
 	 *
 	 * @return string              Human readable duration.
 	 */
-	private function convert_to_human_readable( $microseconds ): string {
+	private function convert_to_human_readable( float $microseconds ): string {
 		$seconds      = $microseconds / 1000000;
 		$minutes      = (int) ( $seconds / 60 );
 		$seconds      = $seconds % 60;
@@ -176,7 +176,7 @@ END;
 	 * <url>
 	 * : The URL of the image to undelete.
 	 */
-	public function undelete( $args, $assoc_args ) {
+	public function undelete( array $args, array $assoc_args ): void {
 		if ( ! defined( 'FILES_CLIENT_SITE_ID' ) || ! defined( 'FILES_ACCESS_TOKEN' ) ) {
 			WP_CLI::error( 'Missing VIP constants!' );
 		}
@@ -258,7 +258,7 @@ END;
 	 *
 	 * @subcommand db-size
 	 */
-	public function db_size( $args, $assoc_args ) {
+	public function db_size( array $args, array $assoc_args ): void {
 		global $wpdb;
 
 		$output   = array();
@@ -367,10 +367,12 @@ END;
 	 * Sorts a table by a specific field and direction.
 	 *
 	 * @param string $field       The field to order by.
-	 * @param array  $table_array The table array to sort.
+	 * @param array  $table_array The table array to sort, passed by reference.
 	 * @param string $direction   The direction to sort. Ascending ('asc') or descending ('desc').
+	 *
+	 * @return bool
 	 */
-	private function sort_table_by( $field, &$table_array, $direction ) {
+	private function sort_table_by( string $field, array &$table_array, string $direction ): bool {
 		// Taken from https://joshtronic.com/2013/09/23/sorting-associative-array-specific-key/ Thanks!
 		usort(
 			$array,

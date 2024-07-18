@@ -139,7 +139,7 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 	 * @param array $args       An indexed array of positional arguments.
 	 * @param array $assoc_args An associative array containing the command's flags and their values.
 	 */
-	public function scan( $args, $assoc_args ) {
+	public function scan( array $args, array $assoc_args ): void {
 		$start               = isset( $assoc_args['start'] ) ? intval( $assoc_args['start'] ) : 0;
 		$max_posts           = isset( $assoc_args['max-posts'] ) ? intval( $assoc_args['max-posts'] ) : 1000;
 		$max_terms           = isset( $assoc_args['max-terms'] ) ? intval( $assoc_args['max-terms'] ) : 10;
@@ -228,7 +228,7 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 	 *
 	 * @return string Returns the formatted time interval as a string, with the unit appended.
 	 */
-	private function format_microseconds( $microseconds ) {
+	private function format_microseconds( float $microseconds ): string {
 		if ( $microseconds < 1000 ) {
 			return number_format( $microseconds ) . 'us';
 		} elseif ( $microseconds < 1000000 ) {
@@ -249,7 +249,7 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 	 * @return array Returns an associative array with the 'response' key containing the response object,
 	 *               and the 'response_time' key containing the time taken to get the response in milliseconds.
 	 */
-	private function fetch_url_and_get_response_time( $url ) {
+	private function fetch_url_and_get_response_time( string $url ): array {
 		// Apply the search and replace if they have been set.
 		if ( ! empty( $this->search ) && ! empty( $this->replace ) ) {
 			$url = str_replace( $this->search, $this->replace, $url );
@@ -284,11 +284,13 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 	/**
 	 * Manages response times and calculates initial average.
 	 *
-	 * @param array      $response_times    Reference to the response times array.
+	 * @param array      $response_times    Reference to the response times array, passed by reference.
 	 * @param float      $response_time     The new response time to be added.
-	 * @param float|null $initial_average The initial average to be calculated once after 40 requests.
+	 * @param float|null $initial_average The initial average to be calculated once after 40 requests, passed by reference.
+	 *
+	 * @return void
 	 */
-	private function manage_response_times( &$response_times, $response_time, &$initial_average ) {
+	private function manage_response_times( array &$response_times, float $response_time, float|null &$initial_average ): void {
 		// Append the new response time.
 		$response_times[] = $response_time;
 
@@ -307,13 +309,15 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 	 * Adjusts the sleep duration based on the rolling average of response times.
 	 *
 	 * @param array $response_times           The array containing response times.
-	 * @param float $initial_average          The initial average of the response times.
-	 * @param float $current_sleep_duration   Reference to the current sleep duration to be modified.
-	 * @param float $max_sleep_duration       Reference to the max sleep duration cap.
-	 * @param array $previous_averages        Reference to the array storing previous rolling averages.
+	 * @param float $initial_average          The initial average of the response times, passed by reference.
+	 * @param float $current_sleep_duration   Reference to the current sleep duration to be modified, passed by reference.
+	 * @param float $max_sleep_duration       Reference to the max sleep duration cap, passed by reference.
+	 * @param array $previous_averages        Reference to the array storing previous rolling averages, passed by reference.
 	 * @param float $base_sleep_duration      The base sleep duration.
+	 *
+	 * @return void
 	 */
-	private function adjust_sleep_duration( $response_times, $initial_average, &$current_sleep_duration, &$max_sleep_duration, &$previous_averages, $base_sleep_duration ) {
+	private function adjust_sleep_duration( array $response_times, float $initial_average, float &$current_sleep_duration, float &$max_sleep_duration, array &$previous_averages, float $base_sleep_duration ): void {
 		// Calculate rolling average of last 40.
 		$rolling_average = array_sum( $response_times ) / count( $response_times );
 
@@ -357,8 +361,10 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 	 * @param int    $index             The index of the URL.
 	 * @param array  $log_buffer        Reference to the log buffer to be updated.
 	 * @param string $response_log_file The file path for logging responses.
+	 *
+	 * @return void
 	 */
-	private function handle_logging( $response, $url, $index, &$log_buffer, $response_log_file ) {
+	private function handle_logging( array $response, string $url, int $index, array &$log_buffer, string $response_log_file ): void {
 		// Handle wp_remote_get errors.
 		if ( is_wp_error( $response ) ) {
 			$status_code = $response->get_error_message();
@@ -386,7 +392,7 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 	 *
 	 * @return void
 	 */
-	private function flush_log_buffer( &$log_buffer, $response_log_file ) {
+	private function flush_log_buffer( array &$log_buffer, string $response_log_file ): void {
 		$fp = fopen( $response_log_file, 'a' );
 		foreach ( $log_buffer as $line ) {
 			fputcsv( $fp, $line );
@@ -402,16 +408,16 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 	 * number of URLs scanned, the base average response time, the current rolling
 	 * average response time, and the current sleep duration.
 	 *
-	 * @param WP_CLI\Progress\Bar $progress The WP_CLI progress bar instance.
-	 * @param int                 $i The current index of the URL being processed.
-	 * @param array               $urls The array of URLs to scan.
-	 * @param float               $initial_average The initial average response time for comparison.
-	 * @param float               $rolling_average The current rolling average response time.
-	 * @param int                 $current_sleep_duration The current sleep duration in microseconds.
+	 * @param \WP_CLI\Progress\Bar $progress The WP_CLI progress bar instance.
+	 * @param int                  $i The current index of the URL being processed.
+	 * @param array                $urls The array of URLs to scan.
+	 * @param float                $initial_average The initial average response time for comparison.
+	 * @param float                $rolling_average The current rolling average response time.
+	 * @param int                  $current_sleep_duration The current sleep duration in microseconds.
 	 *
 	 * @return void
 	 */
-	private function update_progress( $progress, $i, $urls, $initial_average, $rolling_average, $current_sleep_duration ) {
+	private function update_progress( \WP_CLI\Progress\Bar $progress, int $i, array $urls, float $initial_average, float $rolling_average, int $current_sleep_duration ): void {
 		$message = sprintf(
 			'Scanning %s:%s URLs (Base: %s, Avg: %s, Sleep: %s)',
 			number_format( $i ),
@@ -428,7 +434,7 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 	 *
 	 * @return array An array of URLs for public post types.
 	 */
-	private function get_post_type_urls() {
+	private function get_post_type_urls(): array {
 		$urls            = array();
 		$post_types      = get_post_types( array( 'public' => true ) );
 		$public_statuses = get_post_stati( array( 'public' => true ), 'names', 'and' );
@@ -465,7 +471,7 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 	 *
 	 * @return array An array of URLs for public taxonomies.
 	 */
-	private function get_taxonomy_urls() {
+	private function get_taxonomy_urls(): array {
 		$urls       = array();
 		$taxonomies = get_taxonomies( array( 'public' => true ) );
 
@@ -491,7 +497,7 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 	 *
 	 * @return array An array of URLs for author archives.
 	 */
-	private function get_author_urls() {
+	private function get_author_urls(): array {
 		$urls = array();
 
 		// Retrieve all public post types.
@@ -513,7 +519,7 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 	 *
 	 * @return array An array of miscellaneous URLs.
 	 */
-	private function get_misc_urls() {
+	private function get_misc_urls(): array {
 		$urls = array();
 		// Home URL.
 		$urls[] = home_url();
@@ -535,7 +541,7 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 	 *
 	 * @return array An array of all GET route URLs.
 	 */
-	private function get_all_rest_routes() {
+	private function get_all_rest_routes(): array {
 		global $wp_rest_server;
 
 		// Initialize the REST API server if not already done.
@@ -579,7 +585,7 @@ class VIP_URL_Checker_Command extends WP_CLI_Command {
 	 *
 	 * @return array An array of all compiled URLs.
 	 */
-	private function get_all_urls() {
+	private function get_all_urls(): array {
 		$urls = array_merge(
 			$this->get_post_type_urls(),
 			$this->get_taxonomy_urls(),

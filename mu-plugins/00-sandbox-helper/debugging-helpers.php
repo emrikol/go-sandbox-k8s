@@ -11,7 +11,7 @@ if ( ! function_exists( 'vip_dump' ) ) {
 	 *
 	 * @return void
 	 */
-	function vip_dump( $var_to_dump = null ) {
+	function vip_dump( mixed $var_to_dump = null ): void {
 		if ( 0 === ob_get_level() ) {
 			$old_setting = ini_get( 'html_errors' );
 			ini_set( 'html_errors', false ); // phpcs:ignore WordPress.PHP.IniSet.Risky
